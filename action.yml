@@ -1,0 +1,14 @@
+name: "My Custom Action"
+description: "An example GitHub Action using Node.js and TypeScript"
+author: "Your Name"
+inputs:
+  name:
+    description: "The name to greet"
+    required: true
+    default: "World"
+runs:
+  using: "node16"
+  main: "dist/index.js"
+branding:
+  icon: "check-circle"
+  color: "blue"
