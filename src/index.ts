@@ -1,15 +1,17 @@
 import axios from "axios";
+import * as github from "@actions/github";
 
 declare var process: {
   env: {
-    TITLE: string;
-    PR_NUMBER: string;
-    REPO_NAME: string;
     API_TOKEN: string;
     ORG_ID: string;
   };
 };
-const { TITLE, PR_NUMBER, REPO_NAME, API_TOKEN, ORG_ID } = process.env;
+const { API_TOKEN, ORG_ID } = process.env;
+
+const prTitle = github.context.payload.pull_request?.title;
+const prNumber = github.context.payload.pull_request?.number;
+const repoFullName = github.context.payload.repository?.full_name;
 
 const API_URL = "https://api.tracker.yandex.net/v2/issues";
 
@@ -31,8 +33,7 @@ async function sendPrComment(): Promise<void> {
   try {
     const taskId = getTaskId();
     const comments: Comment[] = await getComments(taskId);
-    // const prCommentText = `[${TITLE}](https://github.lmru.tech/${REPO_NAME}/pull/${PR_NUMBER})`;
-    const prCommentText = `[${TITLE}](https://github.com/${REPO_NAME}/pull/${PR_NUMBER})`;
+    const prCommentText = `[${prTitle}](https://github.com/${repoFullName}/pull/${prNumber})`;
 
     if (isPrCommentExist(comments, prCommentText)) {
       console.log(`PR comment already exist`);
@@ -74,9 +75,9 @@ async function addComment(commentText: string, taskId: string) {
 }
 
 function getTaskId() {
-  const regExpResult = TITLE.toUpperCase().match(regexForTaskId);
+  const regExpResult = prTitle.toUpperCase().match(regexForTaskId);
   if (!regExpResult || regExpResult.length > 1) {
-    throw new Error(`Wrong title for ${TITLE}`);
+    throw new Error(`Wrong title for ${prTitle}`);
   }
   return regExpResult[0];
 }
