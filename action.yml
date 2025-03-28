@@ -1,4 +1,4 @@
-name: "My Custom Action"
+name: "yandex-tracker-pr-connection"
 description: "An example GitHub Action using Node.js and TypeScript"
 author: "Your Name"
 inputs:
